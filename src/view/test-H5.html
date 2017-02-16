@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>test-h5</title>
+    <link rel="stylesheet" href="/css/component.css" type="text/css"/>
+</head>
+<body>
+
+    <div>
+
+    </div>
+
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script>
+        $(function(){
+
+            new H5('h5')
+            .addPage('1')
+                    .addComponent({
+                        name:"1-1",
+                        type:"base",
+                        width:"300",
+                        height:"195",
+                        text:"hello",
+                        background:"/imgs/cjlu_night.jpg",
+                        onClick:function(){
+                        },
+                        location:{
+                            horiCenter:true,
+                            vert:{
+                                direction:'bottom',
+                                distance:'0px'
+                            }
+                        },
+                        css:{
+                            color:'#fff',
+                            opacity:0
+                        },
+                        animate:{
+                            animateIn:{
+                                bottom:'80px',
+                                opacity:1
+                            },
+                            animateOut:{
+                                bottom:'0px',
+                                opacity:0
+                            },
+                            duration:500,
+                            delay:500
+                        }
+                    })
+            .addPage('2')
+                    .addComponent({
+                        name:"2-1",
+                        type:"base",
+                        width:"300",
+                        height:"195",
+                        text:"hello",
+                        background:"/imgs/cjlu_night.jpg",
+                        onClick:function(){
+                        },
+                        location:{
+                            horiCenter:true,
+                            vert:{
+                                direction:'bottom',
+                                distance:'0px'
+                            }
+                        },
+                        css:{
+                            color:'#fff',
+                            opacity:0
+                        },
+                        animate:{
+                            animateIn:{
+                                bottom:'80px',
+                                opacity:1
+                            },
+                            animateOut:{
+                                bottom:'0px',
+                                opacity:0
+                            },
+                            duration:500,
+                            delay:500
+                        }
+                    })
+            .show();
+
+        })
+    </script>
+</body>
+</html>

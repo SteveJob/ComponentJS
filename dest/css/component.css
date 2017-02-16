@@ -1,0 +1,4 @@
+body div {
+  background-color: #0086B3; }
+  body div:first-child {
+    display: none; }

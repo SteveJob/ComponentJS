@@ -1,0 +1,21 @@
+{
+  "name": "componentslide",
+  "description": "some component used in h5 lantern slide",
+  "main": "index.js",
+  "authors": [
+    "Steve"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "slide",
+    "component"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

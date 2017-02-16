@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scalable=1"/>
+    <title>hello</title>
+    <link rel="stylesheet" href="/css/component.css" type="text/css">
+    <style type="text/css" rel="stylesheet">
+        .component{
+
+            display: none;
+        }
+
+        /*.component-leave{*/
+            /*opacity:0;*/
+        /*}*/
+        /*.component-load{*/
+            /*opacity:1;*/
+        /*}*/
+    </style>
+</head>
+<body>
+    <div class="h5">
+        <div class="section page" id="page1">
+            <h1 class="component">hello h5!hello h5!hello h5!vhello h5!hello h5!hello h5!hello h5!hello h5!hello h5!hello h5!hello h5!hello h5!hello h5!</h1>
+        </div>
+
+        <div class="section page" id="page2">
+            <p class="component">hello h5!</p>
+        </div>
+        <div class="section page" id="page3">
+            <p class="component">hello h5!</p>
+        </div>
+        <div class="section page" id="page4">
+            <p class="component">hello h5!</p>
+        </div>
+        <div class="section page" id="page5">
+            <p class="component">hello h5!</p>
+        </div>
+    </div>
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.h5').fullpage({
+                anchors:["first","second","third","forth","fifth"],
+                onLeave: function (index,nextIndex,direction) {
+                    $('.page').eq(index-1).trigger('onleave');
+                },
+                afterLoad: function (anchor,index) {
+                    $('.page').eq(index-1).trigger('onload');
+                }
+            });
+
+            $('.page').on('onleave',function(){
+                console.log($(this).attr('id'),'====onleave');
+                $(this).find('.component').trigger('onleave');
+            })
+
+            $('.page').on('onload',function(){
+                console.log($(this).attr('id'),'====onload');
+                $(this).find('.component').trigger('onload');
+            })
+
+            $(".component").on('onleave', function () {
+                $(this).fadeOut().addClass('component-leave').removeClass('component-load');
+                return false;
+            })
+
+            $(".component").on('onload', function () {
+                $(this).fadeIn().addClass('component-load').removeClass('component-leave');
+                return false;
+            })
+
+        });
+    </script>
+
+</body>
+</html>

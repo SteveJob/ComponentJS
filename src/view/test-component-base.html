@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>test-component-base</title>
+    <link href="/css/component.css" rel="stylesheet" type="text/css">
+    <style type="text/css" rel="stylesheet">
+        #phone{
+            width: 375px;
+            height: 667px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+        body{
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="phone">
+    </div>
+
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" >
+
+        $(function () {
+            var component=ComponentBase({
+                name:"",
+                type:"base",
+                width:"300",
+                height:"195",
+                text:"hello",
+                background:"/imgs/cjlu_night.jpg",
+                onClick:function(id){
+                    $('#'+id).trigger('onload');
+                },
+                location:{
+                    horiCenter:true,
+                    vert:{
+                        direction:'bottom',
+                        distance:'0px'
+                    }
+                },
+                css:{
+                    color:'#fff',
+                    opacity:0
+                },
+                animate:{
+                    animateIn:{
+                        bottom:'80px',
+                        opacity:1
+                    },
+                    animateOut:{
+                        bottom:'0px',
+                        opacity:0
+                    },
+                    duration:500,
+                    delay:500
+                }
+            });
+
+            $('#phone').append(component);
+
+        })
+
+
+    </script>
+</body>
+</html>
