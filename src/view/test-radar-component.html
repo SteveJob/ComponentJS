@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>test-component-base</title>
+    <link href="/css/component.css" rel="stylesheet" type="text/css">
+    <style type="text/css" rel="stylesheet">
+        #phone{
+            position: relative;
+            width: 375px;
+            height: 667px;
+            margin: 0 auto;
+            background-color: #fff;
+            /*background-color: #ff0084;*/
+        }
+        body{
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="phone">
+</div>
+
+<script type="text/javascript" src="/js/main.js"></script>
+<script type="text/javascript" >
+
+    $(function () {
+        var component=RadarComponent({
+            name:"radarname",
+            type:"radar",
+            width:"200",
+            height:"200",
+            text:"",
+            data:[
+                ['node',0.3,'#0f0'],
+                ['requirejs',0.8,'#0f0'],
+                ['javascript',0.5,'#0f0'],
+                ['java',0.2,'#0f0'],
+                ['python',0.4,'#0f0'],
+                ['android',0.8,'#0f0']
+            ],
+            radarColor:{
+                backColor:['rgba(255,0,0,.2)','rgba(255,255,0,.2)','rgba(255,0,0,.2)','rgba(255,255,0,.2)'],
+                ribColor:'rgba(255,255,255,.2)',
+                lineColor:'#f00',
+                dotColor:'#f00',
+                textColor:'#000'
+            },
+
+            location:{
+                    horiCenter:true,
+            },
+            css:{
+                color:'#fff',
+                opacity:0,
+                top:'20%',
+                marginTop:'-100px',
+                left:'10%',
+            },
+            animate:{
+                animateIn:{
+                    bottom:'80px',
+                    opacity:1
+                },
+                animateOut:{
+                    bottom:'0px',
+                    opacity:0
+                },
+                duration:500,
+                delay:0
+            }
+        });
+
+        $('#phone').append(component);
+
+        var mark=false;
+        $('#phone').click(function () {
+
+            if(!mark) {
+                $(this).find('.component').trigger('onload');
+                mark = true;
+            } else {
+                $(this).find('.component').trigger('onleave');
+                mark=false;
+            }
+        })
+
+    })
+
+
+</script>
+</body>
+</html>

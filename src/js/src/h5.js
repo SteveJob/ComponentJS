@@ -2,7 +2,7 @@
  * Created by briar on 17/2/15.
  */
 
-function H5(clzName){
+function H5(clzName,fpConfig){
 
     var $pages=[];
     var $curPage;
@@ -32,6 +32,21 @@ function H5(clzName){
             case 'base':
                 component=ComponentBase(config);
                 break;
+            case 'point':
+                component=PointComponent(config);
+                break;
+            case 'bargraph':
+                component=BargraphComponent(config);
+                break;
+            case 'linechart':
+                component=LinechartComponent(config);
+                break;
+            case 'radar':
+                component=RadarComponent(config);
+                break;
+            case 'cake':
+                component=CakeComponent(config);
+                break;
             default:
                 break;
         }
@@ -41,7 +56,8 @@ function H5(clzName){
 
     this.show=function(){
         this.el.show();
-        $('.h5').fullpage({
+        //整合fullpage配置项 如果已有onLeave和afterLoad配置则覆盖
+        $.extend(fpConfig,{
             onLeave: function (index,nextIndex,direction) {
                 $pages[index-1].trigger('onleave');
             },
@@ -50,6 +66,7 @@ function H5(clzName){
                 $pages[index-1].trigger('onload');
             }
         });
+        $('.h5').fullpage(fpConfig);
     }
 
 };

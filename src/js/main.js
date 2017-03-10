@@ -13307,48 +13307,52 @@ var ComponentBase=function(cfg){
     var config=cfg||{};
     this.$componentBase=$('<div id="'+id+'" class="component component_type_'+config.type+' component_name_'+config.name+'"></div>');
 
+    config.css          &&this.$componentBase.css(config.css);
     config.text         &&this.$componentBase.text(config.text);
     config.width        &&this.$componentBase.width(config.width);
     config.height       &&this.$componentBase.height(config.height);
     config.background   &&this.$componentBase.css('backgroundImage','url('+config.background+')');
-    config.css          &&this.$componentBase.css(config.css);
 
-    if (typeof config.onClick==='function'){
-        this.$componentBase.on('click',config.onClick);
-        console.log(id);
-    }
+
+
 
     if (config.location){
         config.location.horiCenter && this.$componentBase.css({
             left:'50%',
             marginLeft:-(config.width/2)
-        })
+        });
         config.location.vert    &&this.$componentBase.css(config.location.vert.direction,config.location.vert.distance);
     }
 
     this.$componentBase.on('onload', function () {
-        $(this).addClass('component_load').removeClass('component_leave');
+        $(this).addClass('component_'+config.type+'_load').removeClass('component_'+config.type+'_leave');
         if (config.animate&&config.animate.animateIn){
-            $(this).animate(config.animate.animateIn,config.animate.duration).delay(config.animate.delay);
+            $(this).stop().animate(config.animate.animateIn,config.animate.duration).delay(config.animate.delay);
         }
         return false;
     });
 
     this.$componentBase.on('onleave', function () {
-        $(this).addClass('component_leave').removeClass('component_load');
+        $(this).addClass('component_'+config.type+'_leave').removeClass('component_'+config.type+'_load');
         if (config.animate&&config.animate.animateOut){
-            $(this).animate(config.animate.animateOut,config.animate.duration);
+            $(this).stop().animate(config.animate.animateOut,config.animate.duration);
         }
         return false;
     });
 
+    if (typeof config.onClick==='function'){
+        this.$componentBase.click(function() {
+            config.onClick(id)
+        });
+    }
+
     return this.$componentBase;
-}
+};
 /**
  * Created by briar on 17/2/15.
  */
 
-function H5(clzName){
+function H5(clzName,fpConfig){
 
     var $pages=[];
     var $curPage;
@@ -13378,6 +13382,21 @@ function H5(clzName){
             case 'base':
                 component=ComponentBase(config);
                 break;
+            case 'point':
+                component=PointComponent(config);
+                break;
+            case 'bargraph':
+                component=BargraphComponent(config);
+                break;
+            case 'linechart':
+                component=LinechartComponent(config);
+                break;
+            case 'radar':
+                component=RadarComponent(config);
+                break;
+            case 'cake':
+                component=CakeComponent(config);
+                break;
             default:
                 break;
         }
@@ -13387,7 +13406,8 @@ function H5(clzName){
 
     this.show=function(){
         this.el.show();
-        $('.h5').fullpage({
+        //整合fullpage配置项 如果已有onLeave和afterLoad配置则覆盖
+        $.extend(fpConfig,{
             onLeave: function (index,nextIndex,direction) {
                 $pages[index-1].trigger('onleave');
             },
@@ -13396,6 +13416,452 @@ function H5(clzName){
                 $pages[index-1].trigger('onload');
             }
         });
+        $('.h5').fullpage(fpConfig);
     }
 
+};
+
+/**
+ * Created by briar on 17/2/25.
+ */
+var PointComponent=function (cfg) {
+    var $pointComponent=ComponentBase(cfg);
+
+    console.log(cfg.data);
+    if(cfg.data&&(cfg.data instanceof Array)){
+        $.each(cfg.data,function (index,item) {
+            console.log(cfg.data);
+            var $point=$('<div class="point point_'+index+'"></div>');
+            // $point.text(item[0]);
+            var width=Math.floor(item[1]*cfg.width);
+            var height=Math.floor(item[1]*cfg.height);
+            $point.width(width).height(height);
+
+            $point.css({
+                top:item[3]+'%',
+                left:item[4]+'%',
+                borderRadius:width/2+'px '+height/2+'px',
+                backgroundColor:item[2],
+                fontSize:width/5+'px'
+            });
+
+            var $content=$('<p class="name">'+item[5]+'</p><p class="percent">'+item[6]+'</p>');
+
+
+            $point.append($content);
+
+            $pointComponent.append($point);
+        });
+
+
+    }
+
+    return $pointComponent;
+}
+/**
+ * Created by briar on 17/2/25.
+ */
+var BargraphComponent=function (cfg) {
+
+    var $bargraphConponent=ComponentBase(cfg);
+
+    if (cfg.data&&(cfg.data instanceof Array)){
+        $.each(cfg.data,function (index,item) {
+            var $bargraph=$('<div class="bargraph"></div>');
+            var $name=$('<div class="name">'+item[0]+'</div>');
+            var $progressWrapper=$('<div class="progress-wrapper"></div>');
+            $progressWrapper.width(item[1]*100+'%');
+            var $progress=$('<div class="progress"></div>');
+            if (item[2])
+                $progress.css('backgroundColor',item[2]);
+            var $percent=$('<div class="percent"></div>');
+            $percent.text(item[1]*100+'%');
+            $progressWrapper.append($progress);
+            $bargraph.append($name).append($progressWrapper).append($percent);
+            $bargraphConponent.append($bargraph);
+        })
+    }
+
+    return $bargraphConponent;
+};
+/**
+ * Created by briar on 17/2/25.
+ */
+var LinechartComponent=function (cfg) {
+
+    var $linechartComponent=ComponentBase(cfg);
+
+    var canvas=document.createElement('canvas');
+    canvas.width=cfg.width;
+    canvas.height=cfg.height;
+
+
+    $linechartComponent.append(canvas);
+
+    //添加数据
+    for(var i=0;i<cfg.data.length;i++){
+        var $dataName=$('<div class="data-name data-name-'+i+'">'+cfg.data[i][0]+'</div>');
+        $dataName.css({
+            'left':(i+1/2)*(cfg.width/(cfg.data.length+1)),
+            'width':cfg.width/(cfg.data.length+1)
+        });
+        $linechartComponent.append($dataName);
+    }
+
+    //绘制网格
+    var context=canvas.getContext('2d');
+    context.beginPath();
+    context.lineWidth=1;
+    context.strokeStyle='rgba(50,50,50,.1)';
+
+    var stepX=10;
+    var lineNumX=cfg.height/10+1;
+    for (var i=0;i<lineNumX;i++){
+        context.moveTo(0,stepX*i);
+        context.lineTo(canvas.width,stepX*i);
+    }
+
+    var dataLen=cfg.data.length;
+    var lineNumY=dataLen+2;
+    var stepY=cfg.width/(dataLen+1);
+    for (var i=0;i<dataLen+2;i++){
+        context.moveTo(stepY*i,0);
+        context.lineTo(stepY*i,canvas.height);
+    }
+    context.stroke();
+
+
+    //绘制数据
+    var canvas=document.createElement('canvas');
+    canvas.width=cfg.width;
+    canvas.height=cfg.height;
+    var context=canvas.getContext('2d');
+    $linechartComponent.append(canvas);
+
+    function draw(percent) {
+
+        //绘制坐标点
+        context.clearRect(0,0,cfg.width,cfg.height);
+        context.lineWidth=2;
+        context.strokeStyle='rgba(255,0,0,.5)';
+        context.fillStyle='rgba(255,0,0,.8)';
+        for (var i=0;i<cfg.data.length;i++){
+            context.beginPath();
+            var x=stepY*(i+1);
+            var y=cfg.height*(1-cfg.data[i][1]*percent);
+            context.moveTo(x,y);
+            context.arc(x,y,5,0,2*Math.PI);
+            var text=cfg.data[i][1]*100+'%';
+            context.textAlign='center';
+            context.font='bold 15px sans-serif';
+            context.fillText(text,x,y-10);
+            context.fill();
+        }
+
+
+
+        //绘制连线
+        context.beginPath();
+        context.moveTo(0,cfg.height);
+        for (var i=0;i<cfg.data.length;i++){
+            var x=stepY*(i+1);
+            var y=cfg.height*(1-cfg.data[i][1]*percent);
+
+            context.lineTo(x,y);
+            context.moveTo(x,y);
+        }
+        context.lineTo(cfg.width,cfg.height);
+        context.stroke();
+
+
+        // 绘制背景
+        context.beginPath();
+        context.fillStyle='rgba(255,0,0,.2)';
+        context.moveTo(0,cfg.height);
+        for(var i=0;i<cfg.data.length;i++){
+            var x=stepY*(i+1);
+            var y=cfg.height*(1-cfg.data[i][1]*percent);
+
+            context.lineTo(x,y);
+        }
+        context.lineTo(cfg.width,cfg.height);
+        context.fill();
+    }
+
+    $linechartComponent.on('onload', function () {
+        var n=0;
+        for (var i=0;i<100;i++){
+            console.log(i);
+            setTimeout(function () {
+                n+=0.01;
+                draw(n);
+            },i*10);
+        }
+    });
+
+    $linechartComponent.on('onleave', function () {
+        var n=1;
+        for (var i=0;i<100;i++){
+            console.log(i);
+            setTimeout(function () {
+                n-=0.01;
+                draw(n);
+            },i*2);
+        }
+        return false;
+    });
+
+    return $linechartComponent;
+};
+/**
+ * Created by briar on 17/3/1.
+ */
+var RadarComponent=function (cfg) {
+    var $radarComponent=ComponentBase(cfg);
+
+    var canvas=document.createElement('canvas');
+    canvas.width=   cfg.width;
+    canvas.height=  cfg.height;
+    $radarComponent.append(canvas);
+
+    var dataLen=cfg.data.length;
+    //绘制底图
+    var context=canvas.getContext('2d');
+
+    context.fillStyle='#5f5';
+
+    var r=cfg.width/2;
+    var point={
+        x:cfg.width/2,
+        y:cfg.height/2
+    };
+    //绘制背景
+    for (var j=0;j<4;j++){
+        var r_loop=r*(1-j/4);
+        console.log(r_loop);
+
+        // var colorR=Math.floor(Math.random()*255);
+        // var colorG=Math.floor(Math.random()*255);
+        // var colorB=Math.floor(Math.random()*255);
+        // context.fillStyle='rgb('+colorR+','+colorG+','+colorB+')';
+        context.fillStyle=cfg.radarColor.backColor[j%4];
+        context.beginPath();
+        for(var i=0;i<dataLen;i++) {
+            var rad=(2*Math.PI/360)*(360/dataLen)*i;
+            var x=point.x+Math.sin(rad)*r_loop;
+            var y=point.y+Math.cos(rad)*r_loop;
+            context.lineTo(x,y);
+            console.log(x,y,rad);
+        }
+        context.fill();
+    }
+    //绘制伞骨
+    context.beginPath();
+    context.strokeStyle=cfg.radarColor.ribColor;
+    for (var i=0;i<dataLen;i++){
+        context.moveTo(point.x,point.y);
+        var rad=(2*Math.PI/360)*(360/dataLen)*i;
+        var x=point.x+Math.sin(rad)*r;
+        var y=point.y+Math.cos(rad)*r;
+        context.lineTo(x,y);
+        var $text=$('<div class="data-name">'+cfg.data[i][0]+'</div>');
+        $radarComponent.append($text);
+
+        //调整水平方向文字位置
+        if (x>cfg.width/2){
+            $text.css({
+                left:x-5
+            })
+        }else if(x<cfg.width/2){
+            $text.css({
+                right:cfg.width-x-5
+            })
+        }else{
+            $text.css({
+                left:x-20
+            })
+        }
+        //调整垂直方向文字位置
+        if(y>cfg.width/2){
+            $text.css({
+                top:y+10
+            })
+        }else {
+            $text.css({
+                bottom:cfg.height-y+10
+            })
+        }
+
+    }
+    context.stroke();
+
+
+    //绘制数据
+    var canvas=document.createElement('canvas');
+    canvas.width=   cfg.width;
+    canvas.height=  cfg.height;
+    $radarComponent.append(canvas);
+    var context=canvas.getContext('2d');
+
+    function draw(percent) {
+        context.clearRect(0,0,cfg.width,cfg.height);
+
+        //绘制连线
+        context.strokeStyle=cfg.radarColor.lineColor;
+        context.lineWidth=2;
+        context.beginPath();
+        for (var i=0;i<dataLen;i++){
+            // context.moveTo(point.x,point.y);
+            var rad=(2*Math.PI/360)*(360/dataLen)*i;
+            var x=point.x+Math.sin(rad)*r*cfg.data[i][1]*percent;
+            var y=point.y+Math.cos(rad)*r*cfg.data[i][1]*percent;
+            context.lineTo(x,y);
+        }
+        context.closePath();
+        context.stroke();
+
+
+        //绘制圆点
+        context.beginPath();
+        context.fillStyle=cfg.radarColor.dotColor;
+        context.lineWidth=2;
+        for (var i=0;i<dataLen;i++){
+            var rad=(2*Math.PI/360)*(360/dataLen)*i;
+            var x=point.x+Math.sin(rad)*r*cfg.data[i][1]*percent;
+            var y=point.y+Math.cos(rad)*r*cfg.data[i][1]*percent;
+            context.moveTo(x,y);
+            context.arc(x,y,4,0,2*Math.PI);
+        }
+        context.fill();
+    }
+
+    $radarComponent.on('onload', function () {
+        var n=0;
+        for (var i=0;i<100;i++){
+            // console.log(i);
+            setTimeout(function () {
+                n+=0.01;
+                draw(n);
+            },i*10);
+        }
+    });
+
+    $radarComponent.on('onleave', function () {
+        var n=1;
+        for (var i=0;i<100;i++){
+            console.log(i);
+            setTimeout(function () {
+                n-=0.01;
+                draw(n);
+            },i*2);
+        }
+        return false;
+    });
+
+    return $radarComponent;
+};
+/**
+ * Created by briar on 17/3/1.
+ */
+var CakeComponent=function (cfg) {
+    var $cakeComponent=ComponentBase(cfg);
+
+    var canvas=document.createElement('canvas');
+
+    canvas.width=   cfg.width;
+    canvas.height=  cfg.height;
+
+    $cakeComponent.append(canvas);
+
+    //绘制大饼
+    var context=canvas.getContext('2d');
+    var point={
+        x:cfg.width/2,
+        y:cfg.height/2
+    };
+    var r=cfg.width/2;
+
+    var startAngle=1.5*Math.PI;
+    var stopAngle=0;
+    for (var i=0;i<cfg.data.length;i++){
+        context.beginPath();
+        stopAngle=startAngle+cfg.data[i][1]*Math.PI*2;
+        context.fillStyle=cfg.data[i][2];
+        context.moveTo(point.x,point.y);
+        context.arc(point.x,point.y,r,startAngle,stopAngle);
+        context.fill();
+        console.log(startAngle);
+        console.log(stopAngle);
+
+
+        //添加文字
+        var $text=$('<div class="text-name"></div>');
+        $text.text(cfg.data[i][0]);
+
+        var x=point.x+Math.sin(startAngle)*r;
+        var y=point.y+Math.cos(startAngle)*r;
+        if (x>cfg.width/2){
+            $text.css({
+                left:x
+            });
+        }else {
+            $text.css({
+                right:cfg.width-x
+            });
+        }
+
+        if (y>cfg.height/2){
+            $text.css({
+                top:y
+            });
+        }else {
+            $text.css({
+                bottom:cfg.height-y
+            });
+        }
+        $cakeComponent.append($text);
+
+        startAngle=stopAngle;
+    }
+
+    //绘制蒙版
+    var canvas=document.createElement('canvas');
+    canvas.width=   cfg.width;
+    canvas.height=  cfg.height;
+    $cakeComponent.append(canvas);
+    context=canvas.getContext('2d');
+    function draw(percent) {
+        var startAngle=-0.5*Math.PI;
+        var stopAngle=1.5*Math.PI;
+        context.clearRect(0,0,cfg.width,cfg.height);
+        context.fillStyle=cfg.cakeColor.maskColor;
+        context.beginPath();
+        context.moveTo(point.x,point.y);
+        context.arc(point.x,point.y,r,startAngle+percent*2*Math.PI,stopAngle);
+        context.fill();
+    }
+
+    $cakeComponent.on('onload',function () {
+        var n=0;
+        for (var i=0;i<100;i++){
+            setTimeout(function () {
+                n+=0.01;
+                draw(n);
+            },i*10);
+        }
+        return false;
+    });
+
+    $cakeComponent.on('onleave',function () {
+        var n=1;
+        for (var i=0;i<100;i++){
+            setTimeout(function () {
+                n-=0.01;
+                draw(n);
+            },i*2);
+        }
+        return false;
+    });
+
+    return $cakeComponent;
 };

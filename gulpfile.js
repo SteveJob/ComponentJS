@@ -5,73 +5,67 @@ var uglify=require('gulp-uglify');
 var connect=require('gulp-connect');
 var concat=require('gulp-concat');
 
-//根目录
-var root='./src';
-
-
-//监控目录
-var watchedGlob=[root+'/scss/**/*.scss',root+'/js/**/*.js',root+'/view/**/*.html'];
-
-var jsLib=[
+var config={
+    root:'src',//根目录
+    watchGlob:[root+'/scss/**/*.scss',root+'/js/**/*.js',root+'/view/**/*.html'],//监控目录
+    jslib:jsLib=[
         root+'/js/src/libs/jquery.js',
         root+'/js/src/libs/jquery.ui.js',
         root+'/js/src/libs/jquery.fullPage.js'
-    ];
-
-var jsMain=
-    [   root+'/js/src/lib.js',
+    ],
+    jsmain:[   root+'/js/src/lib.js',
         root+'/js/src/h5_component_base.js',
-        root+'/js/src/h5.js'
-    ];
-//
-//gulp.task('bower',function(){
-//    gulp.src(root+'/bower')
-//})
+        root+'/js/src/h5.js',
+        root+'/js/src/PointComponent.js',
+        root+'/js/src/BargraphComponent.js',
+        root+'/js/src/LinechartComponent.js',
+        root+'/js/src/RadarComponent.js',
+        root+'/js/src/CakeComponent.js'
+    ]
+};
 
-//编译scss
 gulp.task('css',function(){
-   gulp.src(root+'/scss/component.scss')
+   gulp.src(config.root+'/scss/component.scss')
        .pipe(sass())
-       .pipe(gulp.dest(root+'/css'))
+       .pipe(gulp.dest(config.root+'/css'))
        .pipe(connect.reload())
-       .pipe(notify(
-           {
-              message:"finish scss compile!"
-           }))
+       .pipe(notify({
+          message:"finish scss compile!"
+       }));
 });
-
 
 gulp.task('jslib',function(){
-   gulp.src(jsLib)
+   gulp.src(config.jslib)
        .pipe(concat("lib.js"))
-       .pipe(gulp.dest(root+"/js/src"))
+       .pipe(gulp.dest(config.root+"/js/src"))
        .pipe(notify({
            message:"finish jsLib uglify!"
-       }))
+       }));
 });
 
-//压缩js
 gulp.task('js',function(){
-    gulp.src(jsMain)
+    gulp.src(config.jsmain)
         .pipe(concat('main.js'))
-        .pipe(gulp.dest(root+'/js'))
+        .pipe(gulp.dest(config.root+'/js'))
         .pipe(connect.reload())
-        .pipe(notify(
-            {
-                message:"finish js uglify!"
-            }
-        ))
+        .pipe(notify({
+            message:"finish js uglify!"
+        }));
 });
 
-//监控js和scss目录 重新压缩和编译
 gulp.task('watch', function () {
-   gulp.watch(watchedGlob,['css','jslib','js']);
+   gulp.watch(config.watchGlob,['css','jslib','js']);
 });
 
 gulp.task('connect',function(){
     connect.server({
-        root:root
-    })
+        root:config.root
+    });
 });
 
-gulp.task('dev',['css','jslib','js','watch','connect']);
+gulp.task('copyview',function () {
+   gulp.src('src/view/*.html')
+       .pipe(gulp.dest('dest'));
+});
+
+gulp.task('default',['css','jslib','js','copyview','watch','connect']);

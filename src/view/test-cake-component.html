@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width"/>
+    <title>test-component-base</title>
+    <link href="/css/component.css" rel="stylesheet" type="text/css">
+    <style type="text/css" rel="stylesheet">
+        #phone{
+            position: relative;
+            width: 375px;
+            height: 667px;
+            margin: 0 auto;
+            background-color: #fff;
+            /*background-color: #ff0084;*/
+        }
+        body{
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="phone">
+</div>
+
+<script type="text/javascript" src="/js/main.js"></script>
+<script type="text/javascript" >
+
+    $(function () {
+        var component=CakeComponent({
+            name:"cakename",
+            type:"cake",
+            width:"200",
+            height:"200",
+            text:"",
+            data:[
+                ['node',0.4,'#f00'],
+                ['requirejs',0.25,'#0f0'],
+                ['javascript',0.15,'#00f'],
+                ['java',0.1,'#f00'],
+                ['python',0.08,'#0f0'],
+                ['android',0.02,'#00f']
+            ],
+            cakeColor:{
+                maskColor:'#f0f0f0'
+            },
+            location:{
+                    horiCenter:true,
+            },
+            css:{
+                color:'#fff',
+                opacity:0,
+                top:'20%',
+                marginTop:'-100px',
+                left:'10%',
+            },
+            animate:{
+                animateIn:{
+                    bottom:'80px',
+                    opacity:1
+                },
+                animateOut:{
+                    bottom:'0px',
+                    opacity:0
+                },
+                duration:500,
+                delay:0
+            }
+        });
+
+        $('#phone').append(component);
+
+        var mark=false;
+        $('#phone').click(function () {
+
+            if(!mark) {
+                $(this).find('.component').trigger('onload');
+                mark = true;
+            } else {
+                $(this).find('.component').trigger('onleave');
+                mark=false;
+            }
+        })
+
+    })
+
+
+</script>
+</body>
+</html>

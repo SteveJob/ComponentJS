@@ -7,10 +7,11 @@
     <link href="/css/component.css" rel="stylesheet" type="text/css">
     <style type="text/css" rel="stylesheet">
         #phone{
+            position: relative;
             width: 375px;
             height: 667px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: #ff0084;
         }
         body{
             background-color: #000;
@@ -26,26 +27,29 @@
     <script type="text/javascript" >
 
         $(function () {
-            var component=ComponentBase({
-                name:"",
-                type:"base",
+            var component=BargraphComponent({
+                name:"4-1",
+                type:"bargraph",
                 width:"300",
-                height:"195",
-                text:"hello",
-                background:"/imgs/cjlu_night.jpg",
-                onClick:function(id){
-                    $('#'+id).trigger('onload');
-                },
+                height:"600",
+                text:"",
+                data:[
+                    ['java',0.3,'#0f0'],
+                    ['js',0.4,'#0f0'],
+                    ['android',0.5,'#0f0'],
+                    ['java',0.2,'#0f0'],
+                    ['js',0.4,'#0f0'],
+                    ['android',0.5,'#0f0'],
+                ],
                 location:{
-                    horiCenter:true,
-                    vert:{
-                        direction:'bottom',
-                        distance:'0px'
-                    }
+//                    horiCenter:true,
                 },
                 css:{
                     color:'#fff',
-                    opacity:0
+                    opacity:0,
+                    top:'20%',
+                    marginTop:'-100px',
+                    left:'10%',
                 },
                 animate:{
                     animateIn:{
@@ -57,17 +61,22 @@
                         opacity:0
                     },
                     duration:500,
-                    delay:500
+                    delay:0
                 }
             });
 
             $('#phone').append(component);
 
-            var mark=0;
+            var mark=false;
             $('#phone').click(function () {
-                mark=!mark;
-                mark?$(this).find('.component').trigger('onload'):$(this).find('.component').trigger('onleave');
 
+                if(!mark) {
+                    $(this).find('.component').trigger('onload');
+                    mark = true;
+                } else {
+                    $(this).find('.component').trigger('onleave');
+                    mark=false;
+                }
             })
 
         })

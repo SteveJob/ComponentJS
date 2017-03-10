@@ -407,3 +407,99 @@ template {
 
 .component {
   position: absolute; }
+
+.point {
+  background-color: #ff6b7f;
+  position: absolute;
+  text-align: center; }
+  .point .name {
+    margin-top: 25%;
+    font-size: 1em; }
+  .point .percent {
+    font-size: .5em; }
+
+.bargraph {
+  margin-top: 10px;
+  overflow: hidden;
+  color: #000; }
+  .bargraph .name, .bargraph .progress-wrapper, .bargraph .percent {
+    display: inline-block; }
+  .bargraph .name {
+    float: left;
+    font-size: 1em;
+    text-align: right;
+    width: 70px; }
+  .bargraph .progress-wrapper {
+    float: left;
+    height: 20px;
+    border-radius: 0px 2px 2px 0px/0px 2px 2px 0px;
+    margin-left: 5px; }
+  .bargraph .progress {
+    height: 100%;
+    width: 0px;
+    background-color: #2023ff; }
+  .bargraph .percent {
+    opacity: 0;
+    float: left;
+    font-size: 1em;
+    margin-left: 5px; }
+
+.component_bargraph_load .progress {
+  width: 100%;
+  transition: all 1s; }
+
+.component_bargraph_leave .progress {
+  width: 0px;
+  transition: all 1s; }
+
+.component_bargraph_load .percent {
+  opacity: 1;
+  transition: all 1s 1s; }
+
+.component_bargraph_leave .percent {
+  opacity: 0;
+  transition: all 1s 1s; }
+
+.component_name_6_1 canvas {
+  position: absolute;
+  top: 0;
+  left: 0; }
+
+.component_name_6_1 .data-name {
+  color: #000;
+  font-size: 12px;
+  position: absolute;
+  text-align: center;
+  bottom: -20px;
+  opacity: 0; }
+
+.component_name_6_1.component_linechart_load .data-name {
+  opacity: 1;
+  -webkit-transition: opacity 1s 1s;
+  -moz-transition: opacity 1s 1s;
+  -ms-transition: opacity 1s 1s;
+  -o-transition: opacity 1s 1s;
+  transition: opacity 1s 1s; }
+
+.component_name_6_1.component_linechart_leave .data-name {
+  opacity: 0; }
+
+.component_name_radarname canvas {
+  position: absolute;
+  top: 0;
+  left: 0; }
+
+.component_name_radarname div {
+  color: #000;
+  text-align: center;
+  position: absolute; }
+
+.component_name_cakename canvas {
+  position: absolute;
+  top: 0;
+  left: 0; }
+
+.component_name_cakename .text-name {
+  position: absolute;
+  color: #0a0a0a;
+  z-index: 1000; }

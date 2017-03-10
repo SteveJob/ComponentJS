@@ -26,26 +26,32 @@
     <script type="text/javascript" >
 
         $(function () {
-            var component=ComponentBase({
-                name:"",
-                type:"base",
-                width:"300",
-                height:"195",
-                text:"hello",
-                background:"/imgs/cjlu_night.jpg",
-                onClick:function(id){
-                    $('#'+id).trigger('onload');
-                },
+            var component=PointComponent({
+                name:"4-1",
+                type:"point",
+                width:"200",
+                height:"200",
+                text:"",
+                data:[
+                        ['text_point_1',1,'#f00',0,0,'java','80%'],['text_point_2',0.4,'#f00',-50,-10,'java','80%'],['text_point_3',0.5,'#f00',100,10,'java','80%']
+                ],
+//                background:"/imgs/cjlu_night.jpg",
+//                onClick:function(id){
+//                    $('#'+id).trigger('onload');
+//                    console.log('#'+id);
+//                },
                 location:{
                     horiCenter:true,
-                    vert:{
-                        direction:'bottom',
-                        distance:'0px'
-                    }
+//                    vert:{
+//                        direction:'bottom',
+//                        distance:'0px'
+//                    }
                 },
                 css:{
                     color:'#fff',
-                    opacity:0
+                    opacity:0,
+                    top:'50%',
+                    marginTop:'-100px'
                 },
                 animate:{
                     animateIn:{
@@ -57,17 +63,22 @@
                         opacity:0
                     },
                     duration:500,
-                    delay:500
+                    delay:0
                 }
             });
 
             $('#phone').append(component);
 
-            var mark=0;
+            var mark=false;
             $('#phone').click(function () {
-                mark=!mark;
-                mark?$(this).find('.component').trigger('onload'):$(this).find('.component').trigger('onleave');
 
+                if(!mark) {
+                    $(this).find('.component').trigger('onload');
+                    mark = true;
+                } else {
+                    $(this).find('.component').trigger('onleave');
+                    mark=false;
+                }
             })
 
         })
